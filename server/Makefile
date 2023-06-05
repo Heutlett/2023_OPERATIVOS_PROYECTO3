@@ -7,6 +7,7 @@ BIN_DIR=bin
 SRC_DIR=.
 
 # Arguments
+# 192.168.18.68
 IP ?= 127.0.0.1
 PORT ?= 8080
 
@@ -23,7 +24,7 @@ endif
 
 server: bin
 	$(CC) $(SRC_DIR)/server.c $(CFLAGS) -o $(BIN_DIR)/server
-	sudo $(BIN_DIR)/server $(IP) $(PORT)
+	sudo $(BIN_DIR)/server $(PORT)
 
 .PHONY: clean
 
