@@ -1,1 +1,0 @@
-cmd_/home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -z noexecstack   --build-id  -T ./scripts/module-common.lds -o /home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.ko /home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.o /home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.mod.o;  true

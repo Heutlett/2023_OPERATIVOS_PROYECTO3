@@ -1,0 +1,1 @@
+cmd_/home/jey/Documents/Operativos/Proyect3/usb/mydriver.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -z noexecstack   --build-id  -T ./scripts/module-common.lds -o /home/jey/Documents/Operativos/Proyect3/usb/mydriver.ko /home/jey/Documents/Operativos/Proyect3/usb/mydriver.o /home/jey/Documents/Operativos/Proyect3/usb/mydriver.mod.o;  true

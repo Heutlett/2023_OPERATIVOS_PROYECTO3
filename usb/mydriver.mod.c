@@ -27,28 +27,16 @@ __used __section(__versions) = {
 	{ 0xdd8f8694, "module_layout" },
 	{ 0x867847b8, "usb_deregister" },
 	{ 0x785cf894, "usb_register_driver" },
-	{ 0x7b262fbe, "usb_deregister_dev" },
-	{ 0xaa2a8b37, "usb_find_interface" },
-	{ 0x1e33f55, "_dev_info" },
-	{ 0xeb233a45, "__kmalloc" },
-	{ 0x296695f, "refcount_warn_saturate" },
-	{ 0x853bbff4, "usb_register_dev" },
-	{ 0xcc89dd22, "usb_get_dev" },
-	{ 0xca7a3159, "kmem_cache_alloc_trace" },
-	{ 0x428db41d, "kmalloc_caches" },
-	{ 0xb44ad4b3, "_copy_to_user" },
-	{ 0x4ae457fa, "usb_bulk_msg" },
+	{ 0x22e92418, "device_destroy" },
+	{ 0xb65e5a32, "class_destroy" },
+	{ 0x22b90774, "cdev_del" },
+	{ 0x6091b333, "unregister_chrdev_region" },
+	{ 0x7749276a, "device_create" },
+	{ 0xc4952f09, "cdev_add" },
+	{ 0x2064fa56, "cdev_init" },
+	{ 0x2871e975, "__class_create" },
+	{ 0xe3ec2f2b, "alloc_chrdev_region" },
 	{ 0xc5850110, "printk" },
-	{ 0x72e2c5fd, "usb_submit_urb" },
-	{ 0xbdcfd186, "usb_free_urb" },
-	{ 0x362ef408, "_copy_from_user" },
-	{ 0x88db9f48, "__check_object_size" },
-	{ 0x5b8856f3, "usb_alloc_coherent" },
-	{ 0x102ff065, "usb_alloc_urb" },
-	{ 0x3cc3f5dc, "__dynamic_dev_dbg" },
-	{ 0x39fd0f21, "usb_free_coherent" },
-	{ 0x37a0cba, "kfree" },
-	{ 0xd3ffbaac, "usb_put_dev" },
 	{ 0xbdfb6dbb, "__fentry__" },
 };
 
@@ -56,4 +44,4 @@ MODULE_INFO(depends, "");
 
 MODULE_ALIAS("usb:v0403p6001d*dc*dsc*dp*ic*isc*ip*in*");
 
-MODULE_INFO(srcversion, "C459941BB1D116E58AAEA2D");
+MODULE_INFO(srcversion, "D1B836BF286E805698D774F");

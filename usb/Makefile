@@ -28,5 +28,5 @@ clean:
 
 else
     # called from kernel build system: just declare what our modules are
-    obj-m := usb-skeleton.o
+    obj-m := mydriver.o
 endif
