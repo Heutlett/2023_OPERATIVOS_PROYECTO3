@@ -5,8 +5,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "colors.h"
 #include <signal.h>
+#include "colors.h"
+#include "utils.c"
 
 #define BUFFER_SIZE 1024
 
@@ -19,8 +20,7 @@ int len;                        // Global address length
 // sudo ufw status
 
 /**
- * The function handles shutting down the server by closing the socket and printing a message.
- *
+ * @brief The function handles shutting down the server by closing the socket and printing a message.
  * @param sig The parameter "sig" is an integer representing the signal number that caused the function
  * to be called. In this case, the function "handle_shut_down" is designed to handle the signal for
  * shutting down the server.
@@ -35,16 +35,13 @@ void handle_shut_down(int sig)
     exit(EXIT_SUCCESS);
 }
 
-// UDP Server :
-//    1.  Create a UDP socket.
-//    2.  Bind the socket to the server address.
-//    3.  Wait until the datagram packet arrives from the client.
-//    4.  Process the datagram packet and send a reply to the client.
-//    5.  Go back to Step 3.
+/**
+ * @brief Creates and configures the upd server socket.
+ * @param port The port number to bind the server socket to.
+ */
 void createServer(int port)
 {
     int n;
-    char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
     struct sockaddr_in server_addr;
     len = sizeof(client_addr);
 
@@ -81,16 +78,22 @@ void createServer(int port)
     default_color();
 }
 
-void handleMessage()
+/**
+ * @brief Handles incoming messages from clients.
+ * @param key The key used for message decryption.
+ */
+void handleMessage(int key)
 {
     int n;
-    char server_message[BUFFER_SIZE], client_message[BUFFER_SIZE];
+    char code[BUFFER_SIZE];
+    char *decrypted;
 
     while (1)
     {
+
         // Receive client's message:
-        n = recvfrom(sockfd, client_message, sizeof(client_message), 0, (struct sockaddr *)&client_addr, &len);
-        client_message[n] = '\0'; // Null-terminate the received message
+        n = recvfrom(sockfd, code, sizeof(code), 0, (struct sockaddr *)&client_addr, &len);
+        code[n] = '\0'; // Null-terminate the received message
         if (n < 0)
         {
             bold_red();
@@ -99,50 +102,54 @@ void handleMessage()
         }
 
         bold_green();
-        printf("\n   ● From client: %s\n", client_message);
-        default_color();
-
-        // Process the message (You can add your own logic here)
-        // For now it's just copying the input to the output
-        strcpy(server_message, client_message);
-
-        // Send a response to the client
-        if (sendto(sockfd, server_message, strlen(server_message), 0, (struct sockaddr *)&client_addr, len) < 0)
-        {
-            bold_red();
-            printf("\n⛔ Couldn't send.\n");
-            default_color();
-
-            exit(EXIT_FAILURE);
-        }
+        printf("\n  ▶ From client\n", code);
 
         bold_magenta();
-        printf("      ↪ To: %s\n", server_message);
+        printf("    ◖ enc : %s\n", code);
+        default_color();
+
+        // XOR decrypt the message with the key
+        decrypted = xorEncrypt(code, key);
+
+        if (decrypted == NULL)
+        {
+            bold_red();
+            printf("\n⛔ Decryption failed\n");
+            default_color();
+            continue;
+        }
+
+        bold_cyan();
+        printf("    ◗ dec : %s\n", decrypted);
         default_color();
     }
 }
 
+/**
+ * @brief Entry point of the UDP server program.
+ * @param argc The number of command-line arguments.
+ * @param argv An array of strings containing the command-line arguments.
+ *             It should have two elements: <port>.
+ * @return 0 on success, 1 on incorrect command-line arguments.
+ */
 int main(int argc, char *argv[])
 {
     // Validate arguments
-    if (argc != 2)
+    if (argc != 3)
     {
         bold_yellow();
-        printf("⭐ Usage: %s <port> <ip>\n", argv[0]);
+        printf("⭐ Usage: %s <port>\n", argv[0]);
         default_color();
         return 1;
     }
-
-    // Get the parameters from the server and store them in global variables
-    int port = atoi(argv[1]);
 
     // Handle termination
     signal(SIGINT, handle_shut_down);  // Set up a signal handler for Ctrl+C
     signal(SIGTSTP, handle_shut_down); // Set up a signal handler for Ctrl+Z
 
     // Create server and handle messages
-    createServer(port);
-    handleMessage();
+    createServer(atoi(argv[1]));
+    handleMessage(atoi(argv[2]));
 
     close(sockfd);
 

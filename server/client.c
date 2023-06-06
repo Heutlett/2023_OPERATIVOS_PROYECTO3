@@ -7,14 +7,38 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "colors.h"
+#include "utils.c"
 
 #define BUFFER_SIZE 1024
 
+char *extractDigits(const char *entry)
+{
+    char *message = (char *)malloc(BUFFER_SIZE * sizeof(char));
+    int j = 0;
+
+    for (int i = 0; entry[i] != '\0'; i++)
+    {
+        if (isdigit(entry[i]))
+        {
+            message[j] = entry[i];
+            j++;
+        }
+    }
+    return message;
+}
+
+/**
+ * @brief Entry point of the UDP client program.
+ * @param argc The number of command-line arguments.
+ * @param argv An array of strings containing the command-line arguments.
+ *             It should have four elements: <server_ip>, <port>, and <key>.
+ * @return 0 on success, 1 on incorrect command-line arguments.
+ */
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
+    if (argc != 4)
     {
-        printf("Usage: %s <server_ip> <port>\n", argv[0]);
+        printf("Usage: %s <server_ip> <port> <key>\n", argv[0]);
         return 1;
     }
 
@@ -41,37 +65,44 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    char *code;
+    char entry[BUFFER_SIZE];
+    char *encrypted;
+
     while (1)
     {
-        char message[BUFFER_SIZE];
+        // Ask for input
         bold_green();
-        printf("\nEnter a message to send to the server (or 'q')");
-        default_color();
-        printf("\n ━ ");
-        fgets(message, BUFFER_SIZE, stdin);
+        printf("\n▶ Type your code: ");
 
-        // Remove newline character from the input
-        message[strcspn(message, "\n")] = '\0';
-
-        if (strcmp(message, "q") == 0)
+        bold_white();
+        fgets(entry, BUFFER_SIZE, stdin);
+        code = extractDigits(entry);
+        if (strlen(code) == 0)
         {
-            bold_yellow();
-            printf("\n🔶 Client exiting...\n");
-            default_color();
-            break;
+            continue;
         }
 
-        // Send the message to the server
-        sendto(sockfd, (const char *)message, strlen(message), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
+        bold_cyan();
+        printf("   ◗ in  : %s\n", code);
 
-        // Receive response from the server
-        memset(buffer, 0, BUFFER_SIZE);
-        ssize_t n = recvfrom(sockfd, (char *)buffer, BUFFER_SIZE, 0, NULL, NULL);
-        buffer[n] = '\0'; // Null-terminate the received message
+        // XOR encrypt the message with the key
+        encrypted = xorEncrypt(code, atoi(argv[3]));
+
+        if (encrypted == NULL)
+        {
+            bold_red();
+            printf("\n⛔ Encryption failed\n");
+            default_color();
+            continue;
+        }
 
         bold_magenta();
-        printf("   ● From server: %s\n", buffer);
+        printf("   ◖ enc : %s\n", encrypted);
         default_color();
+
+        // Send the message to the server
+        sendto(sockfd, (const char *)encrypted, strlen(code), 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     }
 
     close(sockfd);
