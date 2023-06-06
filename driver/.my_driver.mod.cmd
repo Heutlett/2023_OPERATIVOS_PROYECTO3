@@ -1,0 +1,1 @@
+cmd_/home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/my_driver.mod := printf '%s\n'   my_driver.o | awk '!x[$$0]++ { print("/home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/"$$0) }' > /home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/my_driver.mod
