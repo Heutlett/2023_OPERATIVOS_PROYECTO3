@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "*.py": "python",
-        "*.txt": "bibtex-style",
-        "*.c": "c",
-        "cstdlib": "c"
-    }
-}
