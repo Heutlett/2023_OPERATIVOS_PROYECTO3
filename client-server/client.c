@@ -36,9 +36,9 @@ char *extractDigits(const char *entry)
  */
 int main(int argc, char *argv[])
 {
-    if (argc != 4)
+    if (argc != 3)
     {
-        printf("Usage: %s <server_ip> <port> <key>\n", argv[0]);
+        printf("Usage: %s <server_ip> <port>\n", argv[0]);
         return 1;
     }
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     while (1)
     {
         // Ask for input
-        bold_green();
+        bold_cyan();
         printf("\n▶ Type your code: ");
 
         bold_white();
@@ -83,11 +83,11 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        bold_cyan();
-        printf("   ◗ in  : %s\n", code);
+        bold_green();
+        printf("   ◗ in  : %s\n", addSpaces(code));
 
-        // XOR encrypt the message with the key
-        encrypted = xorEncrypt(code, atoi(argv[3]));
+        // ROT128 encrypt the message
+        encrypted = rot128(code);
 
         if (encrypted == NULL)
         {
@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
             continue;
         }
 
-        bold_magenta();
-        printf("   ◖ enc : %s\n", encrypted);
+        bold_red();
+        printf("   ◖ enc : %s\n", addSpaces(encrypted));
         default_color();
 
         // Send the message to the server
