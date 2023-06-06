@@ -1,0 +1,1 @@
+cmd_/home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.mod := { echo  /home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.o;  echo; } > /home/jey/Documents/Operativos/Proyect3/usb/usb-skeleton.mod
