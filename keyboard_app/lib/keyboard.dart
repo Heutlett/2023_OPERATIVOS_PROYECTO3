@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
 
 class VerifyPinScreen extends StatefulWidget {
   const VerifyPinScreen({Key? key}) : super(key: key);
@@ -13,8 +15,8 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
   String _enteredPin = '';
   String _pin = '';
   String _pinValidationMessage = '';
-  double _buttonSize = 70.0;
-  final double _minButtonSize = 65.0;
+  double _buttonSize = 100.0;
+  final double _minButtonSize = 70.0;
   final double _maxButtonSize = 100.0;
 
   @override
@@ -56,7 +58,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
   void _increaseButtonSize() {
     setState(() {
       if (_buttonSize < _maxButtonSize) {
-        _buttonSize += 5.0;
+        _buttonSize += 15.0;
       }
     });
   }
@@ -64,7 +66,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
   void _decreaseButtonSize() {
     setState(() {
       if (_buttonSize > _minButtonSize) {
-        _buttonSize -= 5.0;
+        _buttonSize -= 15.0;
       }
     });
   }
@@ -87,22 +89,45 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
           child: Column(
             children: [
               SizedBox(
-                height: 100,
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: _sendToServer,
+                style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.all(16),
+                    backgroundColor: Colors.yellow,
+                    foregroundColor: Colors.black // Fondo rojo
+                    ),
+                child: Text('Iniciar comunicación',
+                    style: TextStyle(fontSize: 20)),
+              ),
+              SizedBox(
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
+                  ElevatedButton(
                     onPressed: _decreaseButtonSize,
-                    icon: Icon(Icons.remove),
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(8),
+                      backgroundColor: Colors.red, // Fondo rojo
+                    ),
+                    child: Icon(Icons.remove),
+                  ),
+                  ElevatedButton(
+                    onPressed: _increaseButtonSize,
+                    style: ElevatedButton.styleFrom(
+                      shape: CircleBorder(),
+                      padding: EdgeInsets.all(8),
+                      backgroundColor: Colors.green, // Fondo verde
+                    ),
+                    child: Icon(Icons.add),
                   ),
                   Text(
-                    'Tamaño de botón: ${_buttonSize.toInt()}',
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                  IconButton(
-                    onPressed: _increaseButtonSize,
-                    icon: Icon(Icons.add),
+                    'Tamaño de teclado: ${_buttonSize.toInt()}',
+                    style: TextStyle(fontSize: 20.0),
                   ),
                 ],
               ),
@@ -204,5 +229,37 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
         ),
       ),
     );
+  }
+
+  void _sendToServer() async {
+    final String serverIP = '192.168.18.90';
+    final int serverPort =
+        8888; // Reemplaza con el puerto correcto de tu servidor
+
+    RawDatagramSocket? socket;
+    InternetAddress serverAddress;
+
+    try {
+      serverAddress = await InternetAddress(serverIP);
+      socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
+
+      // Enviar mensaje al servidor
+      String message = 'hola servidor';
+      socket.send(message.codeUnits, serverAddress, serverPort);
+
+      print('Mensaje enviado al servidor');
+
+      socket.listen((RawSocketEvent event) {
+        if (event == RawSocketEvent.read) {
+          Datagram? datagram = socket?.receive();
+          if (datagram != null) {
+            String response = utf8.decode(datagram.data);
+            print('Respuesta del servidor: $response');
+          }
+        }
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
