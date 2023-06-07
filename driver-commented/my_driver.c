@@ -229,30 +229,11 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
 	return divisor;
 }
 
-/**
- * ftdi_232am_baud_to_divisor - Calcula el divisor para la velocidad de baudios en un dispositivo FTDI 232AM.
- * @baud: La velocidad de baudios deseada.
- *
- * Esta función calcula el divisor necesario para establecer la velocidad de baudios deseada en un dispositivo FTDI 232AM.
- * El divisor se utiliza para configurar el reloj interno del dispositivo y determinar la velocidad de comunicación.
- *
- * Devuelve: El divisor calculado.
- */
 static unsigned short int ftdi_232am_baud_to_divisor(int baud)
 {
 	 return ftdi_232am_baud_base_to_divisor(baud, 48000000);
 }
 
-/**
- * ftdi_232bm_baud_base_to_divisor - Calcula el divisor base para la velocidad de baudios en un dispositivo FTDI 232BM.
- * @baud: La velocidad de baudios deseada.
- * @base: La frecuencia base del reloj en el dispositivo.
- *
- * Esta función calcula el divisor base necesario para establecer la velocidad de baudios deseada en un dispositivo FTDI 232BM.
- * El divisor base se utiliza para configurar el reloj interno del dispositivo y determinar la velocidad de comunicación.
- *
- * Devuelve: El divisor base calculado.
- */
 static u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
 {
 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
@@ -269,30 +250,11 @@ static u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
 	return divisor;
 }
 
-/**
- * ftdi_232bm_baud_to_divisor - Calcula el divisor para la velocidad de baudios en un dispositivo FTDI 232BM.
- * @baud: La velocidad de baudios deseada.
- *
- * Esta función calcula el divisor necesario para establecer la velocidad de baudios deseada en un dispositivo FTDI 232BM.
- * Utiliza una frecuencia base de reloj de 48.000.000 Hz (48 MHz) para el cálculo.
- *
- * Devuelve: El divisor calculado.
- */
 static u32 ftdi_232bm_baud_to_divisor(int baud)
 {
 	 return ftdi_232bm_baud_base_to_divisor(baud, 48000000);
 }
 
-/**
- * ftdi_2232h_baud_base_to_divisor - Calcula el divisor base para la velocidad de baudios en un dispositivo FTDI 2232H.
- * @baud: La velocidad de baudios deseada.
- * @base: La frecuencia base del reloj en el dispositivo.
- *
- * Esta función calcula el divisor base necesario para establecer la velocidad de baudios deseada en un dispositivo FTDI 2232H.
- * El divisor base se utiliza para configurar el reloj interno del dispositivo y determinar la velocidad de comunicación.
- *
- * Devuelve: El divisor base calculado.
- */
 static u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
 {
 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
@@ -318,53 +280,14 @@ static u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
 	return divisor;
 }
 
-/**
- * ftdi_2232h_baud_to_divisor - Calcula el divisor para la velocidad de baudios en un dispositivo FTDI 2232H.
- * @baud: La velocidad de baudios deseada.
- *
- * Esta función calcula el divisor necesario para establecer la velocidad de baudios deseada en un dispositivo FTDI 2232H.
- * Utiliza una frecuencia base de reloj de 120.000.000 Hz (120 MHz) para el cálculo.
- *
- * Devuelve: El divisor calculado.
- */
 static u32 ftdi_2232h_baud_to_divisor(int baud)
 {
 	 return ftdi_2232h_baud_base_to_divisor(baud, 120000000);
 }
 
-/**
- * set_mctrl - Establece los bits de control del modem en un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- * @set: Bits a establecer.
- *
- * Esta macro establece los bits de control del modem especificados en el puerto serie USB.
- * Utiliza la función update_mctrl para realizar la actualización.
- */
 #define set_mctrl(port, set)		update_mctrl((port), (set), 0)
-
-/**
- * clear_mctrl - Borra los bits de control del modem en un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- * @clear: Bits a borrar.
- *
- * Esta macro borra los bits de control del modem especificados en el puerto serie USB.
- * Utiliza la función update_mctrl para realizar la actualización.
- */
 #define clear_mctrl(port, clear)	update_mctrl((port), 0, (clear))
 
-/**
- * update_mctrl - Actualiza los bits de control del modem en un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- * @set: Bits a establecer.
- * @clear: Bits a borrar.
- *
- * Esta función actualiza los bits de control del modem en un puerto serie USB.
- * Toma como parámetros el puerto serie USB, los bits a establecer y los bits a borrar.
- * Utiliza una llamada de control USB para enviar los cambios al dispositivo FTDI.
- * También actualiza la variable priv->last_dtr_rts para realizar un seguimiento del estado anterior de DTR y RTS.
- *
- * Devuelve: 0 en caso de éxito, un valor negativo en caso de error.
- */
 static int update_mctrl(struct usb_serial_port *port, unsigned int set,
 							unsigned int clear)
 {
@@ -515,17 +438,6 @@ static u32 get_ftdi_divisor(struct tty_struct *tty,
 	return div_value;
 }
 
-
-/**
- * get_ftdi_divisor - Obtiene el divisor FTDI para una velocidad de baudios dada.
- * @tty: Puntero a la estructura tty_struct que representa el dispositivo TTY.
- * @port: Puntero al puerto serie USB.
- *
- * Esta función calcula el divisor FTDI necesario para una velocidad de baudios dada en el dispositivo TTY.
- * Utiliza diferentes funciones auxiliares para calcular el divisor en función del tipo de chip FTDI y la velocidad de baudios.
- *
- * Devuelve: El divisor FTDI correspondiente a la velocidad de baudios dada.
- */
 static int change_speed(struct tty_struct *tty, struct usb_serial_port *port)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -549,16 +461,6 @@ static int change_speed(struct tty_struct *tty, struct usb_serial_port *port)
 	return rv;
 }
 
-/**
- * write_latency_timer - Escribe el temporizador de latencia en un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- *
- * Esta función escribe el valor del temporizador de latencia en un puerto serie USB.
- * Toma como parámetro el puerto serie USB y utiliza una llamada de control USB para enviar el valor al dispositivo FTDI.
- * El valor del temporizador de latencia se recupera de la estructura priv->latency en la variable 'l'.
- *
- * Devuelve: 0 en caso de éxito, un valor negativo en caso de error.
- */
 static int write_latency_timer(struct usb_serial_port *port)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -585,16 +487,6 @@ static int write_latency_timer(struct usb_serial_port *port)
 	return rv;
 }
 
-/**
- * _read_latency_timer - Lee el temporizador de latencia de un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- *
- * Esta función lee el valor del temporizador de latencia de un puerto serie USB.
- * Toma como parámetro el puerto serie USB y utiliza una llamada de control USB para recibir el valor del dispositivo FTDI.
- * El valor del temporizador de latencia se almacena en el búfer 'buf'.
- *
- * Devuelve: El valor del temporizador de latencia leído, o un valor negativo en caso de error.
- */
 static int _read_latency_timer(struct usb_serial_port *port)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -612,16 +504,6 @@ static int _read_latency_timer(struct usb_serial_port *port)
 	return rv;
 }
 
-/**
- * read_latency_timer - Lee el temporizador de latencia de un puerto serie USB.
- * @port: Puntero al puerto serie USB.
- *
- * Esta función lee el valor del temporizador de latencia de un puerto serie USB.
- * Toma como parámetro el puerto serie USB y utiliza la función interna _read_latency_timer para realizar la lectura.
- * Si la lectura es exitosa, el valor del temporizador de latencia se almacena en 'priv->latency'.
- *
- * Devuelve: 0 si la lectura del temporizador de latencia es exitosa, o un valor negativo en caso de error.
- */
 static int read_latency_timer(struct usb_serial_port *port)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -641,16 +523,6 @@ static int read_latency_timer(struct usb_serial_port *port)
 	return 0;
 }
 
-/**
- * get_serial_info - Obtiene información sobre la configuración del puerto serie.
- * @tty: Puntero a la estructura tty_struct que representa el terminal.
- * @ss: Puntero a la estructura serial_struct donde se almacenará la información.
- *
- * Esta función obtiene información sobre la configuración del puerto serie asociado al terminal.
- * Toma como parámetros el puntero a la estructura tty_struct que representa el terminal y el puntero a la estructura serial_struct donde se almacenará la información.
- * Utiliza el campo driver_data de tty para obtener el puerto serie USB correspondiente.
- * A continuación, copia la información relevante de la estructura ftdi_private asociada al puerto serie en la estructura serial_struct proporcionada.
- */
 static void get_serial_info(struct tty_struct *tty, struct serial_struct *ss)
 {
 	struct usb_serial_port *port = tty->driver_data;
@@ -661,24 +533,6 @@ static void get_serial_info(struct tty_struct *tty, struct serial_struct *ss)
 	ss->custom_divisor = priv->custom_divisor;
 }
 
-/**
- * set_serial_info - Establece la información de configuración del puerto serie.
- * @tty: Puntero a la estructura tty_struct que representa el terminal.
- * @ss: Puntero a la estructura serial_struct que contiene la información de configuración.
- *
- * Esta función establece la información de configuración del puerto serie asociado al terminal.
- * Toma como parámetros el puntero a la estructura tty_struct que representa el terminal y el puntero a la estructura serial_struct que contiene la información de configuración.
- * Utiliza el campo driver_data de tty para obtener el puerto serie USB correspondiente.
- * Bloquea el acceso a la configuración del puerto serie con un mutex para evitar condiciones de carrera.
- * Si el usuario no tiene los privilegios de administrador necesarios, verifica si se están modificando las banderas de configuración (flags) que están más allá de la máscara ASYNC_USR_MASK.
- * Si se están modificando estas banderas y el usuario no tiene los privilegios necesarios, se desbloquea el mutex y se devuelve un error de permiso (-EPERM).
- * Almacena los valores antiguos de las banderas y del divisor personalizado para compararlos más adelante.
- * Actualiza las banderas (flags) y el divisor personalizado del puerto serie con los valores proporcionados en la estructura serial_struct.
- * Llama a la función write_latency_timer para escribir el temporizador de latencia.
- * Verifica si las banderas de velocidad (ASYNC_SPD_MASK) o el divisor personalizado (custom_divisor) han cambiado.
- * Si han cambiado, muestra una advertencia de deprecación si se están utilizando las banderas de velocidad y llama a la función change_speed para cambiar la velocidad del puerto serie.
- * Desbloquea el mutex y devuelve 0 para indicar un éxito.
- */
 static int set_serial_info(struct tty_struct *tty, struct serial_struct *ss)
 {
 	struct usb_serial_port *port = tty->driver_data;
@@ -716,21 +570,6 @@ static int set_serial_info(struct tty_struct *tty, struct serial_struct *ss)
 	return 0;
 }
 
-/**
- * get_lsr_info - Obtiene información del registro Line Status del puerto serie.
- * @port: Puntero al puerto serie USB.
- * @retinfo: Puntero a la variable de usuario donde se almacenará la información del registro Line Status.
- *
- * Esta función obtiene información del registro Line Status del puerto serie USB.
- * Toma como parámetros un puntero al puerto serie USB y un puntero a la variable de usuario donde se almacenará la información del registro Line Status.
- * Obtiene el puntero a la estructura ftdi_private asociada al puerto serie USB.
- * Inicializa la variable result a 0.
- * Verifica si el indicador transmit_empty está activado en la estructura ftdi_private.
- * Si está activado, establece el indicador TIOCSER_TEMT en la variable result.
- * Copia el valor de result a la variable de usuario utilizando la función copy_to_user.
- * Si hay un error al copiar los datos, devuelve un error de falta de acceso (-EFAULT).
- * Devuelve 0 para indicar un éxito.
- */
 static int get_lsr_info(struct usb_serial_port *port,
 			unsigned int __user *retinfo)
 {
@@ -943,26 +782,14 @@ static ssize_t event_char_store(struct device *dev,
 
 	return count;
 }
-/**
- * DEVICE_ATTR_WO - Macro para definir un atributo de dispositivo de solo escritura.
- *
- * Esta macro se utiliza para definir un atributo de dispositivo de solo escritura.
- * Específicamente, se utiliza para definir el atributo "event_char".
- */
-
 static DEVICE_ATTR_WO(event_char);
 
-/* Declaración del arreglo de atributos del dispositivo FTDI */
 static struct attribute *ftdi_attrs[] = {
 	&dev_attr_event_char.attr,
 	&dev_attr_latency_timer.attr,
 	NULL
 };
 
-/*
- * Función que determina si un atributo es visible en el objeto kobject del dispositivo FTDI.
- * Retorna los permisos (modo) del atributo.
- */
 static umode_t ftdi_is_visible(struct kobject *kobj, struct attribute *attr, int idx)
 {
 	struct device *dev = kobj_to_dev(kobj);
@@ -988,23 +815,11 @@ static const struct attribute_group ftdi_group = {
 	.is_visible	= ftdi_is_visible,
 };
 
-/*
- * Definición de un grupo de atributos para el dispositivo FTDI.
- */
 static const struct attribute_group *ftdi_groups[] = {
 	&ftdi_group,
 	NULL
 };
 
-/*
-* El código "#ifdef CONFIG_GPIOLIB" se utiliza para condicionalmente 
-* incluir o excluir cierto código en función de si la opción de configuración 
-* CONFIG_GPIOLIB está habilitada o no en el kernel.
-* 
-* Si la opción CONFIG_GPIOLIB está habilitada, el código entre "#ifdef CONFIG_GPIOLIB" 
-* y "#endif" se compilará y formará parte del programa final. Si la opción CONFIG_GPIOLIB 
-* está deshabilitada, ese código se omitirá durante la compilación.
-*/
 #ifdef CONFIG_GPIOLIB
 
 static int ftdi_set_bitmode(struct usb_serial_port *port, u8 mode)
@@ -1427,28 +1242,11 @@ static void ftdi_gpio_remove(struct usb_serial_port *port)
 
 #else
 
-/**
- * ftdi_gpio_init - Inicializa los GPIO para el puerto serie USB
- * @port: Estructura del puerto serie USB
- *
- * Esta función inicializa los GPIO para el puerto serie USB. Actúa como un marcador de posición
- * y actualmente no realiza ninguna acción específica.
- *
- * Retorno: 0 en caso de éxito, código de error en caso de fallo
- */
 static int ftdi_gpio_init(struct usb_serial_port *port)
 {
 	return 0;
 }
 
-/**
- * ftdi_gpio_remove - Elimina la configuración GPIO del puerto serie USB
- * @port: Estructura del puerto serie USB
- *
- * Esta función elimina la configuración GPIO previamente establecida para el puerto serie USB.
- * Actúa como un marcador de posición y no realiza ninguna acción específica en la implementación actual.
- * Se puede utilizar para limpiar y liberar recursos relacionados con la configuración GPIO, si es necesario.
- */
 static void ftdi_gpio_remove(struct usb_serial_port *port) { }
 
 #endif	/* CONFIG_GPIOLIB */
@@ -1459,20 +1257,6 @@ static void ftdi_gpio_remove(struct usb_serial_port *port) { }
  * ***************************************************************************
  */
 
-/**
- * ftdi_probe - Función de sondeo para el dispositivo FTDI
- * @serial: Estructura del dispositivo de serie USB
- * @id: Identificación del dispositivo USB
- *
- * Esta función se llama cuando se está realizando el sondeo del dispositivo FTDI.
- * Comprueba si hay alguna peculiaridad (quirk) asociada con el dispositivo y, en caso afirmativo,
- * llama a la función de sondeo correspondiente. A continuación, establece los datos de serie USB
- * asociados con el dispositivo y devuelve un valor de éxito.
- *
- * @serial: Estructura del dispositivo de serie USB
- * @id: Identificación del dispositivo USB
- * @return: 0 en caso de éxito, un código de error en caso de fallo.
- */
 static int ftdi_probe(struct usb_serial *serial, const struct usb_device_id *id)
 {
 	const struct ftdi_quirk *quirk = (struct ftdi_quirk *)id->driver_info;
@@ -1488,18 +1272,6 @@ static int ftdi_probe(struct usb_serial *serial, const struct usb_device_id *id)
 	return 0;
 }
 
-/**
- * ftdi_port_probe - Función de sondeo de un puerto FTDI
- * @port: Puerto serie USB
- *
- * Esta función se utiliza durante el sondeo de un puerto FTDI. Comprueba si hay alguna peculiaridad
- * (quirk) asociada con el puerto y, en caso afirmativo, llama a la función de sondeo correspondiente.
- * A continuación, inicializa los datos y configuraciones necesarios para el puerto FTDI, determina el tipo
- * de chip FTDI, configura el tamaño máximo del paquete y realiza la inicialización de GPIO.
- *
- * @port: Puerto serie USB
- * @return: 0 en caso de éxito, un código de error en caso de fallo.
- */
 static int ftdi_port_probe(struct usb_serial_port *port)
 {
 	const struct ftdi_quirk *quirk = usb_get_serial_data(port->serial);
@@ -1613,17 +1385,6 @@ static int ftdi_jtag_probe(struct usb_serial *serial)
 	return 0;
 }
 
-/**
- * ftdi_8u2232c_probe - Función de sondeo para el chip FTDI 8U2232C
- * @serial: Estructura usb_serial
- *
- * Esta función se utiliza para el sondeo del chip FTDI 8U2232C. Comprueba el fabricante y el producto
- * del dispositivo USB asociado para determinar si es compatible con JTAG. En caso afirmativo, llama a la
- * función de sondeo ftdi_jtag_probe.
- *
- * @serial: Estructura usb_serial
- * @return: 0 en caso de éxito, un código de error en caso de fallo.
- */
 static int ftdi_8u2232c_probe(struct usb_serial *serial)
 {
 	struct usb_device *udev = serial->dev;
@@ -1660,13 +1421,6 @@ static int ftdi_stmclite_probe(struct usb_serial *serial)
 	return 0;
 }
 
-/**
- * ftdi_port_remove - Función de eliminación del puerto FTDI
- * @port: Puntero al puerto USB serial
- *
- * Esta función se utiliza para eliminar y liberar los recursos asociados a un puerto FTDI.
- * Se encarga de eliminar las configuraciones GPIO y liberar la memoria utilizada por la estructura privada.
- */
 static void ftdi_port_remove(struct usb_serial_port *port)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -1676,17 +1430,6 @@ static void ftdi_port_remove(struct usb_serial_port *port)
 	kfree(priv);
 }
 
-/**
- * ftdi_open - Función de apertura de puerto FTDI
- * @tty: Puntero a la estructura tty_struct
- * @port: Puntero al puerto USB serial
- * 
- * Esta función se utiliza para abrir un puerto FTDI. Realiza una solicitud de reinicio al dispositivo USB,
- * establece la configuración de termios utilizando ftdi_set_termios y luego llama a la función usb_serial_generic_open
- * para realizar la apertura genérica del puerto.
- *
- * Retorna 0 en caso de éxito, un código de error en caso contrario.
- */
 static int ftdi_open(struct tty_struct *tty, struct usb_serial_port *port)
 {
 	struct usb_device *dev = port->serial->dev;
@@ -1710,17 +1453,6 @@ static int ftdi_open(struct tty_struct *tty, struct usb_serial_port *port)
 	return usb_serial_generic_open(tty, port);
 }
 
-/**
- * ftdi_dtr_rts - Configuración de DTR y RTS en un puerto FTDI
- * @port: Puntero al puerto USB serial
- * @on: Valor booleano que indica si se deben activar o desactivar DTR y RTS
- * 
- * Esta función se utiliza para configurar los pines DTR (Data Terminal Ready) y RTS (Request To Send) en un puerto FTDI.
- * Si @on es verdadero, se activarán los pines DTR y RTS llamando a la función set_mctrl.
- * Si @on es falso, se desactivarán los pines DTR y RTS llamando a la función clear_mctrl.
- * Además, si @on es falso, se desactivará el control de flujo enviando un mensaje de control USB al dispositivo para
- * deshabilitar el flujo de control.
- */
 static void ftdi_dtr_rts(struct usb_serial_port *port, int on)
 {
 	struct ftdi_private *priv = usb_get_serial_port_data(port);
@@ -1887,21 +1619,6 @@ static int ftdi_process_packet(struct usb_serial_port *port,
 	return len - 2;
 }
 
-/**
- * ftdi_process_packet - Procesamiento de paquetes recibidos en un puerto FTDI
- * @port: Puntero al puerto USB serial
- * @priv: Puntero a la estructura de datos privados del puerto FTDI
- * @buf: Puntero al búfer de datos recibidos
- * @len: Longitud del búfer de datos recibidos
- * 
- * Esta función se utiliza para procesar los paquetes de datos recibidos en un puerto FTDI.
- * Analiza el estado de la línea de transmisión (CTS, DSR, RI, RLSD) y realiza las acciones correspondientes.
- * También verifica si el transmisor está vacío y guarda esa información en la estructura privada del puerto.
- * A continuación, procesa los caracteres recibidos, identifica las condiciones de error (break, paridad, framing, overrun)
- * y notifica al controlador TTY correspondiente.
- * 
- * Retorna el número de caracteres procesados.
- */
 static void ftdi_process_read_urb(struct urb *urb)
 {
 	struct usb_serial_port *port = urb->context;
@@ -1920,17 +1637,6 @@ static void ftdi_process_read_urb(struct urb *urb)
 		tty_flip_buffer_push(&port->port);
 }
 
-/**
- * ftdi_break_ctl - Control de la señal de break en un puerto FTDI
- * @tty: Puntero a la estructura de datos de la terminal TTY
- * @break_state: Estado de la señal de break (-1 para activar el break, 0 para desactivar el break)
- * 
- * Esta función se utiliza para controlar la señal de break en un puerto FTDI.
- * Si break_state es -1, se activa el break enviando un mensaje de control USB al dispositivo.
- * Si break_state es 0, se desactiva el break restaurando el valor de datos anterior.
- * 
- * Retorna void.
- */
 static void ftdi_break_ctl(struct tty_struct *tty, int break_state)
 {
 	struct usb_serial_port *port = tty->driver_data;
@@ -1961,16 +1667,6 @@ static void ftdi_break_ctl(struct tty_struct *tty, int break_state)
 
 }
 
-/**
- * ftdi_tx_empty - Verifica si el búfer de transmisión está vacío en un puerto FTDI
- * @port: Puntero al puerto serie USB
- * 
- * Esta función verifica si el búfer de transmisión está vacío en un puerto FTDI.
- * Realiza una lectura del estado del modem y comprueba el indicador TEMT (Transmitter Empty).
- * Si el indicador TEMT está activo, significa que el búfer de transmisión está vacío.
- * 
- * Retorna true si el búfer de transmisión está vacío, false en caso contrario.
- */
 static bool ftdi_tx_empty(struct usb_serial_port *port)
 {
 	unsigned char buf[2];
@@ -2210,18 +1906,6 @@ out:
 	return ret;
 }
 
-/**
- * ftdi_tiocmget - Obtiene el estado de las señales del modem en un puerto FTDI
- * @tty: Puntero a la estructura tty_struct
- * 
- * Esta función obtiene el estado de las señales del modem en un puerto FTDI.
- * Realiza una lectura del estado del modem y convierte los bits correspondientes
- * a las señales DSR, CTS, RI y CD en los valores de las constantes TIOCM_DSR,
- * TIOCM_CTS, TIOCM_RI y TIOCM_CD, respectivamente. Además, se añade el estado
- * previo de las señales DTR y RTS.
- * 
- * Retorna un entero que representa el estado de las señales del modem.
- */
 static int ftdi_tiocmget(struct tty_struct *tty)
 {
 	struct usb_serial_port *port = tty->driver_data;
@@ -2242,20 +1926,6 @@ static int ftdi_tiocmget(struct tty_struct *tty)
 	return ret;
 }
 
-/**
- * ftdi_tiocmset - Configura el estado de las señales del modem en un puerto FTDI
- * @tty: Puntero a la estructura tty_struct
- * @set: Máscara de bits para establecer las señales del modem
- * @clear: Máscara de bits para desactivar las señales del modem
- * 
- * Esta función configura el estado de las señales del modem en un puerto FTDI.
- * Recibe una máscara de bits 'set' que indica qué señales deben ser activadas
- * y una máscara de bits 'clear' que indica qué señales deben ser desactivadas.
- * Luego, invoca la función 'update_mctrl' para actualizar el estado de las señales
- * en el puerto.
- * 
- * Retorna el resultado de la función 'update_mctrl'.
- */
 static int ftdi_tiocmset(struct tty_struct *tty,
 			unsigned int set, unsigned int clear)
 {
@@ -2263,21 +1933,7 @@ static int ftdi_tiocmset(struct tty_struct *tty,
 
 	return update_mctrl(port, set, clear);
 }
-/**
- * ftdi_ioctl - Implementación de la operación ioctl para el puerto FTDI
- * @tty: Puntero a la estructura tty_struct
- * @cmd: Comando ioctl
- * @arg: Argumento asociado al comando
- * 
- * Esta función implementa la operación ioctl para el puerto FTDI. Recibe el
- * comando ioctl y el argumento asociado al comando. En esta implementación,
- * se maneja el comando TIOCSERGETLSR para obtener información del estado
- * de la línea de estado del enlace (Line Status Register). Se invoca la función
- * 'get_lsr_info' para obtener esta información.
- * 
- * Retorna el resultado de la función 'get_lsr_info' si el comando es TIOCSERGETLSR,
- * de lo contrario, retorna -ENOIOCTLCMD para indicar que el comando ioctl no es compatible.
- */
+
 static int ftdi_ioctl(struct tty_struct *tty,
 					unsigned int cmd, unsigned long arg)
 {
