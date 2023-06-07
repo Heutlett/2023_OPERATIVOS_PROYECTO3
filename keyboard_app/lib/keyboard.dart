@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'dart:io';
 
 class VerifyPinScreen extends StatefulWidget {
   const VerifyPinScreen({Key? key}) : super(key: key);
@@ -15,9 +13,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
   String _enteredPin = '';
   String _pin = '';
   String _pinValidationMessage = '';
-  double _buttonSize = 100.0;
-  final double _minButtonSize = 70.0;
-  final double _maxButtonSize = 100.0;
+  double _buttonSize = 130.0;
 
   @override
   void initState() {
@@ -35,7 +31,9 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
 
   void _updateEnteredPin(String number) {
     setState(() {
-      _enteredPin += number;
+      if (_enteredPin.length <= 10) {
+        _enteredPin += number;
+      }
     });
   }
 
@@ -55,19 +53,21 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
     });
   }
 
-  void _increaseButtonSize() {
+  void _set_size_big() {
     setState(() {
-      if (_buttonSize < _maxButtonSize) {
-        _buttonSize += 15.0;
-      }
+      _buttonSize = 130;
     });
   }
 
-  void _decreaseButtonSize() {
+  void _set_size_med() {
     setState(() {
-      if (_buttonSize > _minButtonSize) {
-        _buttonSize -= 15.0;
-      }
+      _buttonSize = 115;
+    });
+  }
+
+  void _set_size_small() {
+    setState(() {
+      _buttonSize = 100;
     });
   }
 
@@ -86,104 +86,188 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
-          child: Column(
+          child: Row(
             children: [
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: _sendToServer,
-                style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.all(16),
-                    backgroundColor: Colors.yellow,
-                    foregroundColor: Colors.black // Fondo rojo
-                    ),
-                child: Text('Iniciar comunicación',
-                    style: TextStyle(fontSize: 20)),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: _decreaseButtonSize,
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(8),
-                      backgroundColor: Colors.red, // Fondo rojo
-                    ),
-                    child: Icon(Icons.remove),
-                  ),
-                  ElevatedButton(
-                    onPressed: _increaseButtonSize,
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(8),
-                      backgroundColor: Colors.green, // Fondo verde
-                    ),
-                    child: Icon(Icons.add),
-                  ),
-                  Text(
-                    'Tamaño de teclado: ${_buttonSize.toInt()}',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ],
-              ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'PIN: $_enteredPin',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                  SizedBox(height: 16.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildNumberButton('1'),
-                      _buildNumberButton('2'),
-                      _buildNumberButton('3'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildNumberButton('4'),
-                      _buildNumberButton('5'),
-                      _buildNumberButton('6'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildNumberButton('7'),
-                      _buildNumberButton('8'),
-                      _buildNumberButton('9'),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _buildActionButton(
-                          Icons.backspace, _clearEnteredPin, Colors.red),
-                      _buildNumberButton('0'),
-                      _buildActionButton(
-                          Icons.check_box, _verifyPin, Colors.green),
-                    ],
-                  ),
-                  SizedBox(height: 16.0),
-                  Text(
-                    _pinValidationMessage,
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                      color: _pinValidationMessage == 'PIN incorrecto'
-                          ? Colors.red
-                          : Colors.green,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    color: Colors.blueGrey[100],
+                    child: Row(
+                      children: [
+                        Container(
+                          color: Colors.blueGrey[100],
+                          padding: EdgeInsets.all(8),
+                          width: 350,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Size:',
+                                style: TextStyle(fontSize: 25),
+                              ),
+                              SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: _set_size_big,
+                                style: ElevatedButton.styleFrom(
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(20),
+                                  backgroundColor: _buttonSize == 130
+                                      ? Colors.red
+                                      : Colors.blue, // Fondo rojo
+                                ),
+                                child: Text(
+                                  'B',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: _set_size_med,
+                                style: ElevatedButton.styleFrom(
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(20),
+                                  backgroundColor: _buttonSize == 115
+                                      ? Colors.red
+                                      : Colors.blue, // Fondo rojo
+                                  // Fondo rojo
+                                ),
+                                child: Text(
+                                  'M',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              ElevatedButton(
+                                onPressed: _set_size_small,
+                                style: ElevatedButton.styleFrom(
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(20),
+                                  backgroundColor: _buttonSize == 100
+                                      ? Colors.red
+                                      : Colors.blue, // Fondo rojo
+                                ),
+                                child: Text(
+                                  'S',
+                                  style: TextStyle(fontSize: 25),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Container(
+                          color: Colors.blueGrey[100],
+                          padding: EdgeInsets.all(28),
+                          width: 400,
+                          child: Text(
+                            'PIN: $_enteredPin',
+                            style: TextStyle(
+                              fontSize: 25.0,
+                              fontFamily: 'Consolas',
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                        ),
+                        Container(
+                          color: Colors.blueGrey[100],
+                          padding: EdgeInsets.all(28),
+                          width: 280,
+                          height: 80,
+                          child: _pinValidationMessage == 'PIN incorrecto'
+                              ? Container(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        _pinValidationMessage,
+                                        style: TextStyle(
+                                          fontSize: 24.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: _pinValidationMessage ==
+                                                  'PIN incorrecto'
+                                              ? Colors.red
+                                              : Colors.green,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      _pinValidationMessage == 'PIN incorrecto'
+                                          ? Container(
+                                              child: Icon(
+                                                Icons
+                                                    .sentiment_dissatisfied_rounded,
+                                                size: 30,
+                                                color: Colors.red,
+                                              ),
+                                            )
+                                          : Container(
+                                              child: Icon(
+                                                  Icons
+                                                      .sentiment_very_satisfied_sharp,
+                                                  size: 30,
+                                                  color: Colors.green),
+                                            ),
+                                    ],
+                                  ),
+                                )
+                              : SizedBox(),
+                        ),
+                      ],
                     ),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                      color: Colors.blueGrey[100],
+                      width: 460,
+                      height: 600,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _buildNumberButton('1'),
+                                _buildNumberButton('2'),
+                                _buildNumberButton('3'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _buildNumberButton('4'),
+                                _buildNumberButton('5'),
+                                _buildNumberButton('6'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _buildNumberButton('7'),
+                                _buildNumberButton('8'),
+                                _buildNumberButton('9'),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _buildActionButton(Icons.backspace,
+                                    _clearEnteredPin, Colors.red),
+                                _buildNumberButton('0'),
+                                _buildActionButton(
+                                    Icons.check_box, _verifyPin, Colors.green),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ))
                 ],
               ),
             ],
@@ -229,37 +313,5 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
         ),
       ),
     );
-  }
-
-  void _sendToServer() async {
-    final String serverIP = '192.168.18.90';
-    final int serverPort =
-        8888; // Reemplaza con el puerto correcto de tu servidor
-
-    RawDatagramSocket? socket;
-    InternetAddress serverAddress;
-
-    try {
-      serverAddress = await InternetAddress(serverIP);
-      socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
-
-      // Enviar mensaje al servidor
-      String message = 'hola servidor';
-      socket.send(message.codeUnits, serverAddress, serverPort);
-
-      print('Mensaje enviado al servidor');
-
-      socket.listen((RawSocketEvent event) {
-        if (event == RawSocketEvent.read) {
-          Datagram? datagram = socket?.receive();
-          if (datagram != null) {
-            String response = utf8.decode(datagram.data);
-            print('Respuesta del servidor: $response');
-          }
-        }
-      });
-    } catch (e) {
-      print('Error: $e');
-    }
   }
 }

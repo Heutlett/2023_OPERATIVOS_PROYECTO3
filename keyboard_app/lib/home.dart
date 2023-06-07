@@ -11,25 +11,31 @@ class HomePage extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: Center(
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 40.0),
             SizedBox(
               width: 250,
-              height: 50,
+              height: 250,
               child: ElevatedButton(
                 onPressed: () => _showChangePinPage(context),
-                child: Text('Cambiar pin'),
+                child: Text(
+                  'Change pin',
+                  style: TextStyle(fontSize: 25),
+                ),
               ),
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(width: 50.0),
             SizedBox(
               width: 250,
-              height: 50,
+              height: 250,
               child: ElevatedButton(
                 onPressed: () => _showKeyboardPage(context),
-                child: Text('Abrir teclado'),
+                child: Text(
+                  'Open Keyboard',
+                  style: TextStyle(fontSize: 25),
+                ),
               ),
             ),
             const SizedBox(height: 20.0),

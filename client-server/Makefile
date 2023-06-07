@@ -1,6 +1,6 @@
 # Flags
 CC=gcc
-CFLAGS = -lrt -lm -w -lcurses
+CFLAGS = -lrt -lm -w -lmy_lib
 
 # Paths
 BIN_DIR=bin

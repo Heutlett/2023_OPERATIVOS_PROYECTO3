@@ -1,1 +1,0 @@
-cmd_/home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/Module.symvers :=  sed 's/ko$$/o/'  /home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/modules.order | scripts/mod/modpost  -a   -N -o /home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/Module.symvers -n -e -i Module.symvers -T - 
