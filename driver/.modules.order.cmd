@@ -1,1 +1,0 @@
-cmd_/home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/modules.order := {   echo /home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/my_driver.ko; :; } > /home/jachm/Documents/Repos/2023_OPERATIVOS_PROYECTO3/driver/modules.order
