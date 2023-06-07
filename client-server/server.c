@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <my_lib.h>
 #include <signal.h>
 #include "colors.h"
 #include "utils.c"
@@ -136,6 +137,8 @@ void handleMessage()
             printf("- %s\n", decrypted);
 
             default_color();
+
+            press_keys(decrypted);
 
             exit(EXIT_SUCCESS);
         }
