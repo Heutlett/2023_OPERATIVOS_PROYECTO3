@@ -214,7 +214,7 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                                 ToggleButtons(
                                   children: <Widget>[
                                     Container(
-                                      width: 160,
+                                      width: 155,
                                       padding: EdgeInsets.all(10),
                                       child: Center(
                                         child: Text(
@@ -308,70 +308,81 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
                             ),
                           ),
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
                                 padding: EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueGrey[100],
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(
-                                    color: Colors.blue,
-                                    width: 1,
-                                  ),
-                                ),
                                 width: 310,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Size:',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                    SizedBox(width: 20),
-                                    ElevatedButton(
-                                      onPressed: _set_size_big,
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(20),
-                                        backgroundColor: _buttonSize == 130
-                                            ? Colors.red
-                                            : Colors.blue, // Fondo rojo
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[100],
+                                        border: Border.all(
+                                          color: Colors.blue,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
-                                      child: Text(
-                                        'B',
-                                        style: TextStyle(fontSize: 25),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    ElevatedButton(
-                                      onPressed: _set_size_med,
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(20),
-                                        backgroundColor: _buttonSize == 115
-                                            ? Colors.red
-                                            : Colors.blue, // Fondo rojo
-                                        // Fondo rojo
-                                      ),
-                                      child: Text(
-                                        'M',
-                                        style: TextStyle(fontSize: 25),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    ElevatedButton(
-                                      onPressed: _set_size_small,
-                                      style: ElevatedButton.styleFrom(
-                                        shape: CircleBorder(),
-                                        padding: EdgeInsets.all(20),
-                                        backgroundColor: _buttonSize == 100
-                                            ? Colors.red
-                                            : Colors.blue, // Fondo rojo
-                                      ),
-                                      child: Text(
-                                        'S',
-                                        style: TextStyle(fontSize: 25),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Size:',
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                          SizedBox(width: 20),
+                                          ElevatedButton(
+                                            onPressed: _set_size_big,
+                                            style: ElevatedButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(20),
+                                              backgroundColor: _buttonSize ==
+                                                      130
+                                                  ? Colors.red
+                                                  : Colors.blue, // Fondo rojo
+                                            ),
+                                            child: Text(
+                                              'B',
+                                              style: TextStyle(fontSize: 25),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          ElevatedButton(
+                                            onPressed: _set_size_med,
+                                            style: ElevatedButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(20),
+                                              backgroundColor: _buttonSize ==
+                                                      115
+                                                  ? Colors.red
+                                                  : Colors.blue, // Fondo rojo
+                                              // Fondo rojo
+                                            ),
+                                            child: Text(
+                                              'M',
+                                              style: TextStyle(fontSize: 25),
+                                            ),
+                                          ),
+                                          SizedBox(width: 10),
+                                          ElevatedButton(
+                                            onPressed: _set_size_small,
+                                            style: ElevatedButton.styleFrom(
+                                              shape: CircleBorder(),
+                                              padding: EdgeInsets.all(20),
+                                              backgroundColor: _buttonSize ==
+                                                      100
+                                                  ? Colors.red
+                                                  : Colors.blue, // Fondo rojo
+                                            ),
+                                            child: Text(
+                                              'S',
+                                              style: TextStyle(fontSize: 25),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
