@@ -8,35 +8,26 @@ char keyboard_matrix[ROWS][COLS] = {
   { '7', '8', '9' },
   { 'd', '0', 'r' }
 };
-int current_position[2] = { 3, 1 };  // Posición inicial
+int current_position[2] = { 1, 1 };  // Posición inicial
 
 Servo myservo_UD;
-Servo myservo_LR;
+Servo myservo_LF;
 Servo myservo_FB;
 
-int start_pos_UD = 110;
-int start_pos_LR = 90;
-int start_pos_FB = 90;
+int pos_UD = 90;
+int pos_LF = 90;
+int pos_FB = 110;
 
-int previous_UD;
-
-int pos_UD = start_pos_UD;
-int pos_LR = start_pos_LR;
-int pos_FB = start_pos_FB;
-
-int pos_UD_height_max = 110;
+int pos_UD_height_max = 100;
 int pos_UD_height_touch;
 
-int current_size = 'b';
+int current_size = 'a';
 
-int mov_LR_size;
-int mov_FB_size;
+int mov_LF_size = 12;
+int mov_FB_size = 12;
 int mov_size_offset = 0;
 
-int delay_next_mov = 0;
-int delay_go_start = 0;
-int mov_speed_UD = 0;
-int mov_speed_LR_FB = 0;
+int mov_speed = 500;
 
 void print_keyboard_matrix() {
   for (int i = 0; i < ROWS; i++) {
@@ -55,13 +46,9 @@ void print_keyboard_matrix() {
 
 void move_right() {
   Serial.println("move_right");
-  int target_pos = pos_LR - mov_LR_size;
-  for (int pos = pos_LR; pos >= target_pos; pos--) {
-    myservo_LR.write(pos);
-    delay(mov_speed_LR_FB);
-  }
-  pos_LR = target_pos;
-  
+  pos_LF = pos_LF - mov_LF_size;
+  myservo_LF.write(pos_LF);
+  delay(mov_speed);
   if (current_position[1] < COLS - 1) {
     current_position[1]++;
   }
@@ -69,13 +56,9 @@ void move_right() {
 
 void move_left() {
   Serial.println("move_left");
-  int target_pos = pos_LR + mov_LR_size;
-  for (int pos = pos_LR; pos <= target_pos; pos++) {
-    myservo_LR.write(pos);
-    delay(mov_speed_LR_FB); 
-  }
-  pos_LR = target_pos;
-  
+  pos_LF = pos_LF + mov_LF_size;
+  myservo_LF.write(pos_LF);
+  delay(mov_speed);
   if (current_position[1] > 0) {
     current_position[1]--;
   }
@@ -83,13 +66,19 @@ void move_left() {
 
 void move_down() {
   Serial.println("move_down");
-  int target_pos = pos_FB - mov_FB_size;
-  for (int pos = pos_FB; pos >= target_pos; pos--) {
-    myservo_FB.write(pos);
-    delay(mov_speed_LR_FB); 
+
+  if(current_size == 'a'){
+    mov_size_offset = 0;
   }
-  pos_FB = target_pos;
-  
+
+  if(current_size == 'b'){
+    mov_size_offset = -2;
+  }
+
+  pos_FB = pos_FB - (mov_FB_size + mov_size_offset);
+
+  myservo_FB.write(pos_FB);
+  delay(mov_speed);
   if (current_position[0] < ROWS - 1) {
     current_position[0]++;
   }
@@ -97,88 +86,51 @@ void move_down() {
 
 void move_up() {
   Serial.println("move_up");
-  int target_pos = pos_FB + mov_FB_size;
-  for (int pos = pos_FB; pos <= target_pos; pos++) {
-    myservo_FB.write(pos);
-    delay(mov_speed_LR_FB); 
-  }
-  pos_FB = target_pos;
-  
+  pos_FB = pos_FB + mov_FB_size;
+  myservo_FB.write(pos_FB);
+  delay(mov_speed);
   if (current_position[0] > 0) {
     current_position[0]--;
   }
 }
 
-
-void go_start_pos(){
-  pos_UD = start_pos_UD;
-  pos_LR = start_pos_LR;
-  pos_FB = start_pos_FB;
-
-  current_position[0] = 3;
-  current_position[1] = 1; 
-
-  myservo_LR.write(pos_LR);
-  delay(delay_go_start);
-  myservo_FB.write(pos_FB);
-  delay(delay_go_start);
-  myservo_UD.write(pos_UD);
-  delay(delay_go_start);
-}
-
 void press_screen() {
-  //delay(500);
 
   Serial.print("Current position: ");
   Serial.print(current_position[0]);
   Serial.print(",");
   Serial.println(current_position[1]);
 
-  if (current_size == 'b') {
+  if(current_size == 'a'){
     mov_size_offset = 0;
   }
-  if (current_size == 'm') {
-    mov_size_offset = 0;
-  }
-
-  if (current_size == 's') {
-    mov_size_offset = 0;
+  if(current_size == 'b'){
+    mov_size_offset = -2;
   }
 
   if (current_position[0] == 0) {
-    pos_UD_height_touch = 70 + mov_size_offset;
+    pos_UD_height_touch = 78 + mov_size_offset;
   } else if (current_position[0] == 1) {
     pos_UD_height_touch = 64 + mov_size_offset;
   } else if (current_position[0] == 2) {
-    pos_UD_height_touch = 43 + mov_size_offset;
+    pos_UD_height_touch = 53 + mov_size_offset;
   } else if (current_position[0] == 3) {
-    pos_UD_height_touch = 20 + mov_size_offset;
+    pos_UD_height_touch = 40 + mov_size_offset;
   }
-  //myservo_UD.write(pos_UD_height_touch);
-  //myservo_UD.write(previous_UD);
 
-  myservo_UD.write(pos_UD_height_touch);
+  for (pos_UD = pos_UD_height_max; pos_UD <= pos_UD_height_max; pos_UD++) {
+    myservo_UD.write(pos_UD);
+    delay(6);
+  }
 
-  // for (int pos = pos_UD; pos >= pos_UD_height_touch; pos--) {
-    
-  //   delay(mov_speed_UD);
-  // }
-
-
-  // for (pos_UD = pos_UD_height_max; pos_UD <= pos_UD_height_max; pos_UD++) {
-  //   myservo_UD.write(pos_UD);
-  //   delay(mov_speed_UD);
-  // }
-  // for (pos_UD = pos_UD_height_max; pos_UD >= pos_UD_height_touch; pos_UD--) {
-  //   myservo_UD.write(pos_UD);
-  //   delay(mov_speed_UD);
-  // }
-  // for (pos_UD = pos_UD_height_touch; pos_UD <= pos_UD_height_max; pos_UD++) {
-  //   myservo_UD.write(pos_UD);
-  //   delay(mov_speed_UD);
-  // }
-  
-  //go_start_pos();
+  for (pos_UD = pos_UD_height_max; pos_UD >= pos_UD_height_touch; pos_UD--) {
+    myservo_UD.write(pos_UD);
+    delay(6);
+  }
+  for (pos_UD = pos_UD_height_touch; pos_UD <= pos_UD_height_max; pos_UD++) {
+    myservo_UD.write(pos_UD);
+    delay(6);
+  }
 }
 
 int find_number_position(char number, int* target_pos) {
@@ -231,20 +183,14 @@ void setup() {
   Serial.println("------------------------- STARTED -------------------------");
   print_keyboard_matrix();
 
-  myservo_LR.attach(9);
-  myservo_LR.write(start_pos_LR);
+  myservo_UD.attach(8);
+  myservo_UD.write(pos_UD);
 
-  delay(100);
+  myservo_LF.attach(9);
+  myservo_LF.write(pos_LF);
 
   myservo_FB.attach(10);
-  myservo_FB.write(start_pos_FB);
-
-  delay(100);
-
-  myservo_UD.attach(8);
-  myservo_UD.write(start_pos_UD);
-
-  current_size = 'b';
+  myservo_FB.write(pos_FB);
 }
 
 void loop() {
@@ -252,33 +198,28 @@ void loop() {
     String target_number = Serial.readStringUntil(' ');
     mov_size_offset = 0;
 
-    if (target_number.equals("b\n")) {
+    if (target_number.equals("a\n")) {
+      Serial.print("Size changed to: ");
+      Serial.println(target_number);
+      target_number.trim();
+      current_size = 'a';
+      mov_LF_size = 12;
+      mov_FB_size = 12;
+    } else if (target_number.equals("b\n")) {
       Serial.print("Size changed to: ");
       Serial.println(target_number);
       target_number.trim();
       current_size = 'b';
-    } else if (target_number.equals("m\n")) {
+      mov_LF_size = 7;
+      mov_FB_size = 13; // 14
+    } else if (target_number.equals("c\n")) {
       Serial.print("Size changed to: ");
       Serial.println(target_number);
       target_number.trim();
-      current_size = 'm';
-    } else if (target_number.equals("s\n")) {
-      Serial.print("Size changed to: ");
-      Serial.println(target_number);
-      target_number.trim();
-      current_size = 's';
+      current_size = 'c';
+      mov_LF_size = 8;
+      mov_FB_size = 12;
     } else {
-
-      if (current_size == 'b') {
-        mov_LR_size = 12;
-        mov_FB_size = 20;
-      } else if (current_size == 'm') {
-        mov_LR_size = 7;
-        mov_FB_size = 13;  // 14
-      } else if (current_size == 's') {
-        mov_LR_size = 12;
-        mov_FB_size = 18;
-      }
 
       Serial.print("Number to be pressed: ");
       Serial.println(target_number);
@@ -303,14 +244,11 @@ void loop() {
         } else if (movements[i] == 'u') {
           move_up();
         }
-        delay(delay_next_mov);
       }
 
       press_screen();
 
       print_keyboard_matrix();
-
-      go_start_pos();
     }
   }
 }
