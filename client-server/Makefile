@@ -10,7 +10,6 @@ SRC_DIR=.
 # 192.168.18.68
 IP ?= 127.0.0.1
 PORT ?= 8080
-KEY ?= 1
 
 all: server client
 
@@ -20,17 +19,14 @@ bin:
 client: bin
 ifeq ($(MAKECMDGOALS),client)
 	$(CC) $(SRC_DIR)/client.c $(CFLAGS) -o $(BIN_DIR)/client
-	$(BIN_DIR)/client $(IP) $(PORT) $(KEY)
+	$(BIN_DIR)/client $(IP) $(PORT)
 endif
 
 server: bin
 	$(CC) $(SRC_DIR)/server.c $(CFLAGS) -o $(BIN_DIR)/server
-	sudo $(BIN_DIR)/server $(PORT) $(KEY)
+	sudo $(BIN_DIR)/server $(PORT)
 
 .PHONY: clean
 
 clean:
 	rm -rf $(BIN_DIR)
-
-
-.PHONY: check_port

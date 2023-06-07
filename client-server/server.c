@@ -82,7 +82,7 @@ void createServer(int port)
  * @brief Handles incoming messages from clients.
  * @param key The key used for message decryption.
  */
-void handleMessage(int key)
+void handleMessage()
 {
     int n;
     char code[BUFFER_SIZE];
@@ -101,27 +101,49 @@ void handleMessage(int key)
             exit(EXIT_FAILURE);
         }
 
-        bold_green();
-        printf("\n  ▶ From client\n", code);
-
-        bold_magenta();
-        printf("    ◖ enc : %s\n", code);
+        bold_cyan();
+        printf("\n[FROM CLIENT] ");
+        bold_red();
+        printf("encrypted ");
+        bold_white();
+        printf("- %s\n", addSpaces(code));
         default_color();
 
-        // XOR decrypt the message with the key
-        decrypted = xorEncrypt(code, key);
+        // Fork a new process
+        pid_t pid = fork();
 
-        if (decrypted == NULL)
+        if (pid < 0)
         {
-            bold_red();
-            printf("\n⛔ Decryption failed\n");
-            default_color();
+            printf("\n⛔ Couldn't create child process.\n");
             continue;
         }
+        else if (pid == 0)
+        {
+            // Child process
+            decrypted = addSpaces(rot128(code));
 
-        bold_cyan();
-        printf("    ◗ dec : %s\n", decrypted);
-        default_color();
+            if (decrypted == NULL)
+            {
+                printf("\n⛔ Decryption failed\n");
+                exit(EXIT_FAILURE);
+            }
+
+            bold_cyan();
+            printf("[PID : %d] ", getpid());
+            bold_green();
+            printf("decrypted ");
+            bold_white();
+            printf("- %s\n", decrypted);
+
+            default_color();
+
+            exit(EXIT_SUCCESS);
+        }
+        else
+        {
+            // Parent process
+            continue;
+        }
     }
 }
 
@@ -135,7 +157,7 @@ void handleMessage(int key)
 int main(int argc, char *argv[])
 {
     // Validate arguments
-    if (argc != 3)
+    if (argc != 2)
     {
         bold_yellow();
         printf("⭐ Usage: %s <port>\n", argv[0]);
@@ -149,7 +171,7 @@ int main(int argc, char *argv[])
 
     // Create server and handle messages
     createServer(atoi(argv[1]));
-    handleMessage(atoi(argv[2]));
+    handleMessage();
 
     close(sockfd);
 
