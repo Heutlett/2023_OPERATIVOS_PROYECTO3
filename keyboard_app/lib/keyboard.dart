@@ -14,8 +14,6 @@ class _VerifyPinScreenState extends State<VerifyPinScreen> {
   String _pin = '';
   String _pinValidationMessage = '';
   double _buttonSize = 130.0;
-  final double _minButtonSize = 100.0;
-  final double _maxButtonSize = 130.0;
 
   @override
   void initState() {
