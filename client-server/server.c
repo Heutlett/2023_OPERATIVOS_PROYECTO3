@@ -7,18 +7,48 @@
 #include <netinet/in.h>
 #include <my_lib.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <semaphore.h>
+
 #include "colors.h"
 #include "utils.c"
 
-#define BUFFER_SIZE 1024
+/* *********************************
+    Variables and Constants
+************************************ */
+
+#define BUFFER_SIZE 1024 // Buffer size constant
 
 int sockfd;                     // Global socket file descriptor
 struct sockaddr_in client_addr; // Global client address
 int len;                        // Global address length
 
+sem_t *sem_mutex;                            // Semaphore instance
+const char *sem_mutex_name = "/robotic_arm"; // Semaphore instance names
+
 // sudo ufw allow 8080
 // sudo ufw enable
 // sudo ufw status
+
+/* *********************************
+    Functions
+************************************ */
+
+/**
+ * The function creates semaphores with specific names and permissions.
+ */
+void create_semaphore()
+{
+    sem_mutex = sem_open(sem_mutex_name, O_CREAT, S_IRUSR | S_IWUSR, 0);
+    if (sem_mutex == SEM_FAILED)
+    {
+        bold_red();
+        perror("sem_open() failed");
+        default_color();
+        exit(EXIT_FAILURE);
+    }
+}
 
 /**
  * @brief The function handles shutting down the server by closing the socket and printing a message.
@@ -102,13 +132,13 @@ void handleMessage()
             exit(EXIT_FAILURE);
         }
 
-        bold_cyan();
-        printf("\n[FROM CLIENT] ");
-        bold_red();
-        printf("encrypted ");
-        bold_white();
-        printf("- %s\n", addSpaces(code));
-        default_color();
+        // bold_cyan();
+        // printf("\n[FROM CLIENT] ");
+        // bold_red();
+        // printf("encrypted ");
+        // bold_white();
+        // printf("- %s\n", addSpaces(code));
+        // default_color();
 
         // Fork a new process
         pid_t pid = fork();
@@ -120,6 +150,9 @@ void handleMessage()
         }
         else if (pid == 0)
         {
+
+            int result;
+
             // Child process
             decrypted = addSpaces(rot128(code));
 
@@ -130,15 +163,60 @@ void handleMessage()
             }
 
             bold_cyan();
-            printf("[PID : %d] ", getpid());
+            printf("\n[PID : %d] ", getpid());
             bold_green();
             printf("decrypted ");
             bold_white();
             printf("- %s\n", decrypted);
-
             default_color();
 
-            press_keys(decrypted);
+            // Take care of the resource
+            sem_wait(sem_mutex);
+
+            bold_cyan();
+            printf("[PID : %d] ", getpid());
+            bold_magenta();
+            printf("acquired\n");
+            default_color();
+
+            result = press_keys(decrypted);
+            if (result < 0)
+            {
+                bold_cyan();
+                printf("[PID : %d] ", getpid());
+                bold_yellow();
+                printf("write ");
+                bold_white();
+                printf("- failed\n");
+                default_color();
+            }
+
+            else
+            {
+                bold_cyan();
+                printf("[PID : %d] ", getpid());
+                bold_yellow();
+                printf("write ");
+                bold_white();
+                printf("- succesfull\n");
+                default_color();
+            }
+
+            bold_cyan();
+            printf("[PID : %d] ", getpid());
+            bold_red();
+            printf("awaiting processing...\n");
+            default_color();
+
+            sleep(5); // Wait 10 segundos
+
+            bold_cyan();
+            printf("[PID : %d] ", getpid());
+            bold_magenta();
+            printf("released\n");
+            default_color();
+
+            sem_post(sem_mutex);
 
             exit(EXIT_SUCCESS);
         }
@@ -168,6 +246,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    // Create semaphore
+    create_semaphore();
+
     // Handle termination
     signal(SIGINT, handle_shut_down);  // Set up a signal handler for Ctrl+C
     signal(SIGTSTP, handle_shut_down); // Set up a signal handler for Ctrl+Z
@@ -176,7 +257,12 @@ int main(int argc, char *argv[])
     createServer(atoi(argv[1]));
     handleMessage();
 
+    // Close socket
     close(sockfd);
+
+    // Destroy semaphore
+    sem_close(sem_mutex);
+    sem_unlink(sem_mutex_name);
 
     return 0;
 }

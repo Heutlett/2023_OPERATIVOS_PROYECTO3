@@ -1,6 +1,6 @@
 # Flags
 CC=gcc
-CFLAGS = -lrt -lm -w -lmy_lib
+CFLAGS = -lrt -lm -w -lmy_lib -pthread
 
 # Paths
 BIN_DIR=bin

@@ -3,7 +3,7 @@
 int main(){
 
     char* write_data = "2 "; //example arduino write
-    char* change_size = "a ";  //example arduino set size
+    char* change_size = "m ";  //example arduino set size
 
     set_size(change_size);
     press_keys(write_data);
