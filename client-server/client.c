@@ -18,12 +18,13 @@ char *extractDigits(const char *entry)
 
     for (int i = 0; entry[i] != '\0'; i++)
     {
-        if (isdigit(entry[i]))
-        {
-            message[j] = entry[i];
-            j++;
-        }
+        // if (isdigit(entry[i]))
+        // {
+        message[j] = entry[i];
+        j++;
+        // }
     }
+
     return message;
 }
 
@@ -77,6 +78,8 @@ int main(int argc, char *argv[])
 
         bold_white();
         fgets(entry, BUFFER_SIZE, stdin);
+
+        // Recordar remover el \n
         code = extractDigits(entry);
         if (strlen(code) == 0)
         {

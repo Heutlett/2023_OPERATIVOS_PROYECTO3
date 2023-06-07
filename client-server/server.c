@@ -24,8 +24,8 @@ int sockfd;                     // Global socket file descriptor
 struct sockaddr_in client_addr; // Global client address
 int len;                        // Global address length
 
-sem_t *sem_mutex;                            // Semaphore instance
-const char *sem_mutex_name = "/robotic_arm"; // Semaphore instance names
+sem_t *sem_mutex;                    // Semaphore instance
+const char *sem_mutex_name = "/sem"; // Semaphore instance names
 
 // sudo ufw allow 8080
 // sudo ufw enable
@@ -35,12 +35,46 @@ const char *sem_mutex_name = "/robotic_arm"; // Semaphore instance names
     Functions
 ************************************ */
 
+char *extractDigits(const char *entry)
+{
+    char *message = (char *)malloc(BUFFER_SIZE * sizeof(char));
+    int j = 0;
+
+    for (int i = 0; entry[i] != '\0'; i++)
+    {
+        if (isdigit(entry[i]) || entry[i] == ' ')
+        {
+            message[j] = entry[i];
+            j++;
+        }
+    }
+
+    return message;
+}
+
+char *extractLetters(const char *entry)
+{
+    char *message = (char *)malloc(BUFFER_SIZE * sizeof(char));
+    int j = 0;
+
+    for (int i = 0; entry[i] != '\0'; i++)
+    {
+        if (isalpha(entry[i]))
+        {
+            message[j] = entry[i];
+            j++;
+        }
+    }
+
+    return message;
+}
+
 /**
  * The function creates semaphores with specific names and permissions.
  */
 void create_semaphore()
 {
-    sem_mutex = sem_open(sem_mutex_name, O_CREAT, S_IRUSR | S_IWUSR, 0);
+    sem_mutex = sem_open(sem_mutex_name, O_CREAT, S_IRUSR | S_IWUSR, 1);
     if (sem_mutex == SEM_FAILED)
     {
         bold_red();
@@ -58,8 +92,14 @@ void create_semaphore()
  */
 void handle_shut_down(int sig)
 {
+
+    // Destroy semaphore
+    sem_close(sem_mutex);
+    sem_unlink(sem_mutex_name);
+
     // Close the socket
     close(sockfd);
+
     bold_yellow();
     printf("\nShutting down...\n");
     default_color();
@@ -179,7 +219,23 @@ void handleMessage()
             printf("acquired\n");
             default_color();
 
-            result = press_keys(decrypted);
+            char *size;
+
+            size = extractLetters(decrypted);
+
+            printf(size);
+            printf("%d\n", strlen(size));
+            printf("%d\n", strcmp(size, "s"));
+
+            if (strcmp(size, "s") == 0 || strcmp(size, "m") == 0 || strcmp(size, "b") == 0)
+            {
+                result = set_size(size);
+            }
+            else
+            {
+                decrypted = extractDigits(decrypted);
+                result = press_keys(decrypted);
+            }
             if (result < 0)
             {
                 bold_cyan();

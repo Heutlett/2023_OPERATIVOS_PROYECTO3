@@ -1,0 +1,1 @@
+cmd_/home/jey/Documents/Operativos/Proyect3/driver-2/my_driver.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -z noexecstack   --build-id  -T ./scripts/module-common.lds -o /home/jey/Documents/Operativos/Proyect3/driver-2/my_driver.ko /home/jey/Documents/Operativos/Proyect3/driver-2/my_driver.o /home/jey/Documents/Operativos/Proyect3/driver-2/my_driver.mod.o;  true

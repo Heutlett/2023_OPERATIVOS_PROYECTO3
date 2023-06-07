@@ -65,7 +65,7 @@ static int write_to_usb(char *data, int data_len)
  */
 int set_size(char *size)
 {
-    if (strcmp(size, "s ") == 0 || strcmp(size, "m ") == 0 || strcmp(size, "b ") == 0)
+    if (strcmp(size, "s") == 0 || strcmp(size, "m") == 0 || strcmp(size, "b") == 0)
     {
         return write_to_usb(size, 3);
     }
